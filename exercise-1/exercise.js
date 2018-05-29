@@ -14,16 +14,16 @@ var people2 = [
 ];
 
 //Create a variable `list` by selecting the element with an id of `list`
-
+var list = d3.select('#list');
 
 //Select all of the <p> elements in the #list (there currently are none!)
-
+var listItems = list.selectAll('p');
 
 //Use `.data()` to join the `people1` data set to the paragraph selection
-
+var dataJoin = listItems.data(people1);
 
 //Log out the `.size()` of the data join (think: how many items are selected?)
-
+console.log("join size:", dataJoin.size());
 
 //For each "entering" value in the data join, append a new <p> element.
 //Give that item `.text()` that contains BOTH the index number of the person 
@@ -31,7 +31,14 @@ var people2 = [
 //    <p>0. Edgar</p>
 //Additionally, use the `style()` method to give that list item a 'color'
 //property that is the person's favorite color.
-
+dataJoin.enter()
+    .append('p')
+    .text(function(d,i) {
+      return i+". "+d.name
+    })
+    .style('color', function(d){
+      return d.favColor;
+    });
 
 
 //Add an event listener to the button so that on a click, the following occurs:
@@ -41,7 +48,20 @@ var people2 = [
 //  - Log out the number of "entering" elements
 //  - Log out the number of "exiting" elements
 //  - Remove all exiting elements
+d3.select('button').on('click', function() {
+  var dataJoin = d3.select('#list').selectAll('p')
+      .data(people2, function(d){ return d.name; });
 
+  console.log("entering:", dataJoin.enter().size());
+
+  console.log("exiting:", dataJoin.exit().size());
+
+  dataJoin.exit()
+      .transition()
+          .duration(1000)
+          .style('opacity',0.0)
+      .remove();
+});
 
 //Add a transition() to the above so that the existing elements first have
 //their `opacity` (set via `style()`) change to 0.0 over 1 second, before
